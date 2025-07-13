@@ -1,0 +1,41 @@
+# This file is a template, and might need editing before it works on your project.
+# This is a sample GitLab CI/CD configuration file that should run without any modifications.
+# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
+# it uses echo commands to simulate the pipeline execution.
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+#
+# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+#
+# You can copy and paste this template into a new `.gitlab-ci.yml` file.
+# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
+#
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+
+stages:
+  - deploy
+
+deploy-job:      # This job runs in the deploy stage.
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  script:
+    - source ~/.nvm/nvm.sh
+    - nvm use default
+    - node -v
+    - curl -X POST
+      -H "Content-Type:application/json"
+      -d '{
+      "msgtype":"markdown",
+      "markdown":{
+      "content":"'"$CI_PROJECT_NAME"'-'"$CI_COMMIT_REF_NAME"'分支有新推送\n>推送用户:'"$CI_COMMIT_AUTHOR"'\n>推送时间：'"$CI_JOB_STARTED_AT"'\n>提交信息：'"$CI_COMMIT_MESSAGE"'\n"
+      }
+      }'
+      https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=c31f2d45-644d-437f-8a88-f8df2226db29
+    - cd /root/project/game-data-server
+    - git pull
+    - pnpm i
+    - pnpm build
+    - pm2 restart game-data-server
