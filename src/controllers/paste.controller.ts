@@ -35,20 +35,20 @@ export class PasteController {
 
       if (!userId) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.UNAUTHORIZED, 
-          message: '请先登录' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.UNAUTHORIZED,
+          message: '请先登录'
         };
         return;
       }
 
       if (!content || typeof content !== 'string') {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.BAD_REQUEST, 
-          message: '内容不能为空' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.BAD_REQUEST,
+          message: '内容不能为空'
         };
         return;
       }
@@ -67,18 +67,18 @@ export class PasteController {
         data: paste,
         message: '创建成功'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`createPaste处理完成，总耗时: ${totalTime}ms`);
     } catch (error) {
       logger.error('创建剪贴板内容失败:', error);
       ctx.status = 200;
-      ctx.body = { 
-        success: false, 
-        code: ResponseCode.INTERNAL_ERROR, 
-        message: '服务器错误' 
+      ctx.body = {
+        success: false,
+        code: ResponseCode.INTERNAL_ERROR,
+        message: '服务器错误'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`createPaste处理失败，总耗时: ${totalTime}ms`);
     }
@@ -95,15 +95,17 @@ export class PasteController {
 
       if (!userId) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.UNAUTHORIZED, 
-          message: '请先登录' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.UNAUTHORIZED,
+          message: '请先登录'
         };
         return;
       }
 
       const pastes = await this.pasteService.getUserPastes(userId);
+      const publicPastes = await this.pasteService.getPublicPastes();
+      pastes.push(...publicPastes);
 
       ctx.status = 200;
       ctx.body = {
@@ -112,18 +114,18 @@ export class PasteController {
         data: pastes,
         message: '获取成功'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`getUserPastes处理完成，总耗时: ${totalTime}ms`);
     } catch (error) {
       logger.error('获取用户剪贴板内容失败:', error);
       ctx.status = 200;
-      ctx.body = { 
-        success: false, 
-        code: ResponseCode.INTERNAL_ERROR, 
-        message: '服务器错误' 
+      ctx.body = {
+        success: false,
+        code: ResponseCode.INTERNAL_ERROR,
+        message: '服务器错误'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`getUserPastes处理失败，总耗时: ${totalTime}ms`);
     }
@@ -145,18 +147,18 @@ export class PasteController {
         data: pastes,
         message: '获取成功'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`getPublicPastes处理完成，总耗时: ${totalTime}ms`);
     } catch (error) {
       logger.error('获取公开剪贴板内容失败:', error);
       ctx.status = 200;
-      ctx.body = { 
-        success: false, 
-        code: ResponseCode.INTERNAL_ERROR, 
-        message: '服务器错误' 
+      ctx.body = {
+        success: false,
+        code: ResponseCode.INTERNAL_ERROR,
+        message: '服务器错误'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`getPublicPastes处理失败，总耗时: ${totalTime}ms`);
     }
@@ -174,10 +176,10 @@ export class PasteController {
 
       if (!id || isNaN(Number(id))) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.BAD_REQUEST, 
-          message: '无效的ID' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.BAD_REQUEST,
+          message: '无效的ID'
         };
         return;
       }
@@ -186,10 +188,10 @@ export class PasteController {
 
       if (!paste) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.NOT_FOUND, 
-          message: '内容不存在' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.NOT_FOUND,
+          message: '内容不存在'
         };
         return;
       }
@@ -197,10 +199,10 @@ export class PasteController {
       // 检查访问权限：公开或者是创建者
       if (!paste.isPublic && paste.creator.id !== userId) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.FORBIDDEN, 
-          message: '无权访问' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.FORBIDDEN,
+          message: '无权访问'
         };
         return;
       }
@@ -212,18 +214,18 @@ export class PasteController {
         data: paste,
         message: '获取成功'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`getPasteById处理完成，总耗时: ${totalTime}ms`);
     } catch (error) {
       logger.error('获取剪贴板内容详情失败:', error);
       ctx.status = 200;
-      ctx.body = { 
-        success: false, 
-        code: ResponseCode.INTERNAL_ERROR, 
-        message: '服务器错误' 
+      ctx.body = {
+        success: false,
+        code: ResponseCode.INTERNAL_ERROR,
+        message: '服务器错误'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`getPasteById处理失败，总耗时: ${totalTime}ms`);
     }
@@ -242,20 +244,20 @@ export class PasteController {
 
       if (!userId) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.UNAUTHORIZED, 
-          message: '请先登录' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.UNAUTHORIZED,
+          message: '请先登录'
         };
         return;
       }
 
       if (!id || isNaN(Number(id))) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.BAD_REQUEST, 
-          message: '无效的ID' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.BAD_REQUEST,
+          message: '无效的ID'
         };
         return;
       }
@@ -264,10 +266,10 @@ export class PasteController {
       const hasPermission = await this.pasteService.hasPermission(Number(id), userId);
       if (!hasPermission) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.FORBIDDEN, 
-          message: '无权操作' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.FORBIDDEN,
+          message: '无权操作'
         };
         return;
       }
@@ -281,10 +283,10 @@ export class PasteController {
 
       if (!updatedPaste) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.NOT_FOUND, 
-          message: '内容不存在' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.NOT_FOUND,
+          message: '内容不存在'
         };
         return;
       }
@@ -296,18 +298,18 @@ export class PasteController {
         data: updatedPaste,
         message: '更新成功'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`updatePaste处理完成，总耗时: ${totalTime}ms`);
     } catch (error) {
       logger.error('更新剪贴板内容失败:', error);
       ctx.status = 200;
-      ctx.body = { 
-        success: false, 
-        code: ResponseCode.INTERNAL_ERROR, 
-        message: '服务器错误' 
+      ctx.body = {
+        success: false,
+        code: ResponseCode.INTERNAL_ERROR,
+        message: '服务器错误'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`updatePaste处理失败，总耗时: ${totalTime}ms`);
     }
@@ -325,20 +327,20 @@ export class PasteController {
 
       if (!userId) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.UNAUTHORIZED, 
-          message: '请先登录' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.UNAUTHORIZED,
+          message: '请先登录'
         };
         return;
       }
 
       if (!id || isNaN(Number(id))) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.BAD_REQUEST, 
-          message: '无效的ID' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.BAD_REQUEST,
+          message: '无效的ID'
         };
         return;
       }
@@ -347,10 +349,10 @@ export class PasteController {
       const hasPermission = await this.pasteService.hasPermission(Number(id), userId);
       if (!hasPermission) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.FORBIDDEN, 
-          message: '无权操作' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.FORBIDDEN,
+          message: '无权操作'
         };
         return;
       }
@@ -358,10 +360,10 @@ export class PasteController {
       const success = await this.pasteService.deletePaste(Number(id));
       if (!success) {
         ctx.status = 200;
-        ctx.body = { 
-          success: false, 
-          code: ResponseCode.NOT_FOUND, 
-          message: '内容不存在' 
+        ctx.body = {
+          success: false,
+          code: ResponseCode.NOT_FOUND,
+          message: '内容不存在'
         };
         return;
       }
@@ -372,20 +374,20 @@ export class PasteController {
         code: ResponseCode.SUCCESS,
         message: '删除成功'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`deletePaste处理完成，总耗时: ${totalTime}ms`);
     } catch (error) {
       logger.error('删除剪贴板内容失败:', error);
       ctx.status = 200;
-      ctx.body = { 
-        success: false, 
-        code: ResponseCode.INTERNAL_ERROR, 
-        message: '服务器错误' 
+      ctx.body = {
+        success: false,
+        code: ResponseCode.INTERNAL_ERROR,
+        message: '服务器错误'
       };
-      
+
       const totalTime = Date.now() - totalStartTime;
       logger.info(`deletePaste处理失败，总耗时: ${totalTime}ms`);
     }
   };
-} 
+}
