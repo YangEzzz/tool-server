@@ -26,8 +26,8 @@ export class Menu {
   @Column({ default: true })
   visible!: boolean;
 
-  @Column({ length: 50, nullable: true })
-  permission_code!: string;
+  @Column("integer", { array: true, nullable: true })
+  permission_code!: number[];
 
   @CreateDateColumn()
   createdAt!: Date;

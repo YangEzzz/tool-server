@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import MenuController from '../controllers/menuController';
-import { isAuthenticated, isAdmin, isSuperAdmin } from '../middlewares/authMiddleware';
+import { isAuthenticated, isAdmin, isSuperAdmin } from '@/middlewares/authMiddleware';
 
 const router = new Router({ prefix: '/menus' });
 
@@ -10,4 +10,10 @@ router.get('/user', isAuthenticated, MenuController.getUserMenus);
 // 获取所有菜单 (需要超级管理员权限)
 router.get('/all', isAuthenticated, isSuperAdmin, MenuController.getAllMenus);
 
-export default router; 
+router.post('/createMenus', isAuthenticated, isSuperAdmin, MenuController.createMenus)
+
+router.post('/deleteMenus', isAuthenticated, isSuperAdmin, MenuController.deleteMenu)
+
+router.post('/updateMenus', isAuthenticated, isSuperAdmin, MenuController.updateMenu)
+
+export default router;
