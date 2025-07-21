@@ -6,9 +6,9 @@ echo "开始构建应用..."
 rm -rf dist
 
 # 运行TypeScript编译
-npm run build
+pnpm run build
 
 # 复制环境配置文件
 cp .env.production dist/.env
 
-echo "构建完成" 
+echo "构建完成"
