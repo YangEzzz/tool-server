@@ -1,6 +1,6 @@
 import 'module-alias/register';
 import 'dotenv/config';
-// import https from 'https';
+import https from 'https';
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
@@ -14,17 +14,17 @@ const startServer = async () => {
     await AppDataSource.initialize();
     logger.info('Database connected successfully');
 
-    // const options = {
-    //   key: fs.readFileSync(path.join('/home/ubuntu', 'api.yangezzz.top.key')),
-    //   cert: fs.readFileSync(path.join('/home/ubuntu', 'api.yangezzz.top_bundle.crt'))
-    // };
+    const options = {
+      key: fs.readFileSync(path.join('/root/ssl-folder/api/', 'api.team-tool.top.key')),
+      cert: fs.readFileSync(path.join('/root/ssl-folder/api/', 'api.team-tool.top_bundle.crt'))
+    };
 
-    const server = http.createServer(app.callback()).listen(appConfig.port, () => {
-      logger.info(`HTTPS Server running on port ${appConfig.port}`);
-    });
-    // const server = https.createServer(options, app.callback()).listen(appConfig.port, () => {
+    // const server = http.createServer(app.callback()).listen(appConfig.port, () => {
     //   logger.info(`HTTPS Server running on port ${appConfig.port}`);
     // });
+    const server = https.createServer(options, app.callback()).listen(appConfig.port, () => {
+      logger.info(`HTTPS Server running on port ${appConfig.port}`);
+    });
 
     return server;
   } catch (error) {
