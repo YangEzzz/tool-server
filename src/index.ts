@@ -14,17 +14,23 @@ const startServer = async () => {
     await AppDataSource.initialize();
     logger.info('Database connected successfully');
 
-    const options = {
-      key: fs.readFileSync(path.join('/root/ssl-folder/api/', 'api.team-tool.top.key')),
-      cert: fs.readFileSync(path.join('/root/ssl-folder/api/', 'api.team-tool.top_bundle.crt'))
-    };
+    let server;
+    console.log(appConfig.env);
+    // 测试环境使用 HTTP，其他环境使用 HTTPS
+    if (appConfig.env === 'development') {
+      server = http.createServer(app.callback()).listen(appConfig.port, () => {
+        logger.info(`HTTP Server running on port ${appConfig.port} (test environment)`);
+      });
+    } else {
+      const options = {
+        key: fs.readFileSync(path.join('/root/ssl-folder/api/', 'api.team-tool.top.key')),
+        cert: fs.readFileSync(path.join('/root/ssl-folder/api/', 'api.team-tool.top_bundle.crt'))
+      };
 
-    // const server = http.createServer(app.callback()).listen(appConfig.port, () => {
-    //   logger.info(`HTTPS Server running on port ${appConfig.port}`);
-    // });
-    const server = https.createServer(options, app.callback()).listen(appConfig.port, () => {
-      logger.info(`HTTPS Server running on port ${appConfig.port}`);
-    });
+      server = https.createServer(options, app.callback()).listen(appConfig.port, () => {
+        logger.info(`HTTPS Server running on port ${appConfig.port} (${appConfig.env} environment)`);
+      });
+    }
 
     return server;
   } catch (error) {
